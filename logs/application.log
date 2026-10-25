@@ -1,0 +1,2 @@
+2026-10-25 23:03:34,471 | INFO | rag_sc_judgements.__main__ | Starting RAG Supreme Court Judgements application
+2026-10-25 23:09:27,584 | INFO | rag_sc_judgements.__main__ | Connected to Qdrant at http://127.0.0.1:6333
