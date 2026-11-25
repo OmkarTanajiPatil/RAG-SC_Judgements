@@ -9,22 +9,29 @@ instance.
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from qdrant_client import QdrantClient
 
 from core.logger import get_logger
+from core.utils import read_yaml_file
+
 
 __all__ = ["QdrantSettings", "connect_to_qdrant", "create_qdrant_client"]
 
 logger = get_logger(__name__)
+
+CONFIG_FILE = os.getenv("CONFIG_FILE", "config/config.yaml")
+CONFIG = read_yaml_file(CONFIG_FILE) or {}
+QDRANT_CONFIG = CONFIG.get("qdrant", CONFIG.get("vector_store", CONFIG))
+QDRANT_URL = QDRANT_CONFIG.get("url", "http://127.0.0.1:6333")
 
 
 @dataclass(frozen=True, slots=True)
 class QdrantSettings:
     """Connection settings for a Qdrant server."""
 
-    url: str = "http://127.0.0.1:6333"
+    url: str = field(default_factory=lambda: QDRANT_URL)
     api_key: str | None = None
     timeout: float = 10.0
 
@@ -91,6 +98,6 @@ def connect_to_qdrant(
     logger.info("Connected to Qdrant at %s", resolved_settings.url)
     return client
 
+
 if __name__ == "__main__":
     connect_to_qdrant()
-    
